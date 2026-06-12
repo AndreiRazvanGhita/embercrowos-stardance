@@ -353,3 +353,12 @@ html, body {
   text-shadow: 0 0 calc(6px * var(--presence-intensity, 0.4)) var(--accent);
   transition: transform 0.4s ease-out;
 }
+
+@keyframes embercrow-blink {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+.embercrow-eye.blinking {
+  animation: embercrow-blink 0.15s ease-in-out;
+}

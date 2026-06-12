@@ -2,7 +2,7 @@ import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
 import { MASCOT_LARGE } from './mascot.js';
-import { splitMascotAtEye, getGlowIntensity, calculateEyeOffset } from './presence.js';
+import { splitMascotAtEye, getGlowIntensity, calculateEyeOffset, getNextBlinkDelay } from './presence.js';
 
 const PRESENCE_MAX_OFFSET = 8;
 
@@ -188,11 +188,20 @@ function initEyeTracking(eyeEl) {
   });
 }
 
+function scheduleBlink(eyeEl) {
+  setTimeout(() => {
+    eyeEl.classList.add('blinking');
+    setTimeout(() => eyeEl.classList.remove('blinking'), 150);
+    scheduleBlink(eyeEl);
+  }, getNextBlinkDelay());
+}
+
 function init() {
   renderDesktopIcons();
   presenceEyeEl = renderDesktopMascot();
   updatePresenceGlow();
   initEyeTracking(presenceEyeEl);
+  scheduleBlink(presenceEyeEl);
   updateClock();
   setInterval(updateClock, 1000);
 }
