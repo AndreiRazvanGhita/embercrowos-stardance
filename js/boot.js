@@ -34,6 +34,8 @@ export function playBoot(container, onComplete) {
     if (finished) return;
     finished = true;
     for (const t of timeouts) clearTimeout(t);
+    document.removeEventListener('keydown', finish);
+    document.removeEventListener('click', finish);
     container.classList.add('boot-collapse');
     setTimeout(() => {
       container.style.display = 'none';
