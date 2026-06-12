@@ -31,3 +31,10 @@ npm test
 - `[_]` minimizes to the taskbar, `[x]` closes
 - Click a window or its taskbar entry to focus it
 - Press any key or click during boot to skip the intro
+
+## Ambient Features
+
+- **Living mascot** - the desktop watermark's ember eye tracks your cursor,
+  blinks at random, and glows brighter the more windows you have open
+- **Idle presence** - leave the desktop untouched for ~30 seconds and the
+  eye narrows while a cryptic message appears beside it; any input clears it

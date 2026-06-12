@@ -2,6 +2,19 @@ import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
 import { MASCOT_LARGE } from './mascot.js';
+import { splitMascotAtEye, getGlowIntensity, calculateEyeOffset, getNextBlinkDelay, isIdle, pickIdleMessage } from './presence.js';
+
+const PRESENCE_MAX_OFFSET = 8;
+const PRESENCE_IDLE_THRESHOLD_MS = 30000;
+const PRESENCE_IDLE_MESSAGES = [
+  '...still there?',
+  'signal idle.',
+  'the embercrow waits.',
+];
+
+let presenceLastActivityMs = Date.now();
+let presenceIdle = false;
+let ambientEl = null;
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
@@ -31,6 +44,7 @@ function closeWindow(id) {
   taskbarEls.get(id)?.remove();
   taskbarEls.delete(id);
   updateFocusStyles();
+  updatePresenceGlow();
 }
 
 function focusWindow(id) {
@@ -131,6 +145,7 @@ function openApp(appId) {
   taskbarEls.set(win.id, taskbarEntry);
 
   focusWindow(win.id);
+  updatePresenceGlow();
 }
 
 function renderDesktopIcons() {
@@ -157,9 +172,86 @@ function updateClock() {
   taskbarClock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 }
 
+let presenceEyeEl = null;
+
+function renderDesktopMascot() {
+  const mascotEl = document.getElementById('desktop-bg-mascot');
+  const { before, eye, after } = splitMascotAtEye(MASCOT_LARGE);
+  mascotEl.textContent = '';
+  mascotEl.append(document.createTextNode(before));
+  const eyeEl = document.createElement('span');
+  eyeEl.className = 'embercrow-eye';
+  eyeEl.textContent = eye;
+  mascotEl.append(eyeEl);
+  mascotEl.append(document.createTextNode(after));
+  return eyeEl;
+}
+
+function updatePresenceGlow() {
+  if (!presenceEyeEl) return;
+  const intensity = getGlowIntensity(wm.windows.length);
+  presenceEyeEl.style.setProperty('--presence-intensity', String(intensity));
+}
+
+function registerPresenceActivity() {
+  presenceLastActivityMs = Date.now();
+  if (presenceIdle) {
+    presenceIdle = false;
+    presenceEyeEl.classList.remove('idle');
+    ambientEl.classList.remove('visible');
+  }
+}
+
+function initEyeTracking(eyeEl) {
+  document.addEventListener('mousemove', (e) => {
+    registerPresenceActivity();
+    const offset = calculateEyeOffset(e.clientX, e.clientY, window.innerWidth, window.innerHeight, PRESENCE_MAX_OFFSET);
+    eyeEl.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
+  });
+  document.addEventListener('keydown', registerPresenceActivity);
+  document.addEventListener('click', registerPresenceActivity);
+}
+
+function scheduleBlink(eyeEl) {
+  setTimeout(() => {
+    if (!presenceIdle) {
+      eyeEl.classList.add('blinking');
+      setTimeout(() => eyeEl.classList.remove('blinking'), 150);
+    }
+    scheduleBlink(eyeEl);
+  }, getNextBlinkDelay());
+}
+
+function positionAmbientMessage(eyeEl) {
+  const eyeRect = eyeEl.getBoundingClientRect();
+  const desktopRect = document.getElementById('desktop').getBoundingClientRect();
+  ambientEl.style.left = `${eyeRect.right - desktopRect.left + 8}px`;
+  ambientEl.style.top = `${eyeRect.top - desktopRect.top}px`;
+}
+
+function startIdleWatch(eyeEl) {
+  ambientEl = document.createElement('div');
+  ambientEl.className = 'embercrow-ambient-message';
+  document.getElementById('desktop').appendChild(ambientEl);
+
+  setInterval(() => {
+    if (!presenceIdle && isIdle(presenceLastActivityMs, Date.now(), PRESENCE_IDLE_THRESHOLD_MS)) {
+      presenceIdle = true;
+      eyeEl.classList.add('idle');
+      ambientEl.textContent = pickIdleMessage(PRESENCE_IDLE_MESSAGES);
+      positionAmbientMessage(eyeEl);
+      ambientEl.classList.add('visible');
+    }
+  }, 1000);
+}
+
 function init() {
-  document.getElementById('desktop-bg-mascot').textContent = MASCOT_LARGE;
   renderDesktopIcons();
+  presenceEyeEl = renderDesktopMascot();
+  updatePresenceGlow();
+  initEyeTracking(presenceEyeEl);
+  scheduleBlink(presenceEyeEl);
+  startIdleWatch(presenceEyeEl);
   updateClock();
   setInterval(updateClock, 1000);
 }
