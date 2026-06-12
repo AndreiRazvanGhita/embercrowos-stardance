@@ -41,6 +41,7 @@ export const musicApp = {
     let playing = false;
 
     const draw = () => {
+      if (!container.isConnected) return;
       const data = new Uint8Array(analyser.frequencyBinCount);
       analyser.getByteFrequencyData(data);
       ctx2d.fillStyle = '#0a0a0a';
@@ -55,6 +56,14 @@ export const musicApp = {
     };
 
     const playStep = () => {
+      if (!container.isConnected) {
+        clearInterval(intervalId);
+        cancelAnimationFrame(rafId);
+        audioCtx.close();
+        playing = false;
+        return;
+      }
+
       const osc = audioCtx.createOscillator();
       osc.type = 'square';
       osc.frequency.value = sequence[stepIndex % sequence.length];
@@ -64,7 +73,6 @@ export const musicApp = {
 
       osc.connect(gain);
       gain.connect(analyser);
-      analyser.connect(audioCtx.destination);
 
       osc.start();
       osc.stop(audioCtx.currentTime + NOTE_LENGTH_S);
@@ -76,6 +84,7 @@ export const musicApp = {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 64;
+        analyser.connect(audioCtx.destination);
       }
 
       playing = !playing;
