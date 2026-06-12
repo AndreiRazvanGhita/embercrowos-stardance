@@ -48,13 +48,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EMBERCROW OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="boot-screen"></div>
 
   <div id="desktop">
+    <pre id="desktop-bg-mascot"></pre>
     <div id="desktop-icons"></div>
     <div id="windows-container"></div>
   </div>
@@ -80,6 +81,7 @@
   --fg: #e0e0e0;
   --accent: #ff5c2b;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-display: 'Orbitron', sans-serif;
   --taskbar-height: 40px;
 }
 
@@ -136,6 +138,22 @@ html, body {
   width: 100%;
   height: calc(100% - var(--taskbar-height));
   overflow: hidden;
+}
+
+#desktop-bg-mascot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: var(--fg);
+  opacity: 0.06;
+  font-size: 8px;
+  line-height: 1.1;
+  white-space: pre;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
 }
 
 #desktop-icons {
@@ -286,7 +304,7 @@ html, body {
 
 Run: `python -m http.server 8000` from `R:\stardance-webos`, then open `http://localhost:8000/`.
 
-Expected: a black page with a faint scanline texture, a taskbar at the bottom showing "EMBERCROW OS" in ember orange on the left and nothing else yet. No console errors except a 404 for `js/main.js` (expected — created in Task 5).
+Expected: a black page with a faint scanline texture, a taskbar at the bottom showing "EMBERCROW OS" in ember orange on the left and nothing else yet. The empty `#desktop-bg-mascot` element renders nothing visible until Task 5 fills it. No console errors except a 404 for `js/main.js` (expected — created in Task 5).
 
 - [ ] **Step 5: Commit**
 
@@ -321,8 +339,8 @@ test('MASCOT_LARGE has more lines than MASCOT_SMALL', () => {
   assert.ok(MASCOT_LARGE.split('\n').length > MASCOT_SMALL.split('\n').length);
 });
 
-test('MASCOT_LARGE contains the ember eye marker', () => {
-  assert.ok(MASCOT_LARGE.includes('o'));
+test('MASCOT_LARGE uses dense fill characters for the silhouette', () => {
+  assert.ok(MASCOT_LARGE.includes('@'));
 });
 ```
 
@@ -341,20 +359,42 @@ export const MASCOT_SMALL = `        ▄▄▄▄
    ▀██▀▀
     ▀▀▄▄▄▄▄▄`;
 
-export const MASCOT_LARGE = `                  ▄▄▄▄▄▄
-              ▄████████████▄
-           ▄███████████████▀
-        ▄██████████████▀▀  o
-      ▄█████████████▀
-    ▄████████████▀
-  ▄███████████▀
- ██████████▀
- ▀████████▄
-   ▀████████▄▄
-     ▀▀█████████▄▄
-          ▀▀███████▄▄
-               ▀▀▀▀████▄▄
-                       ▀▀▀▀`;
+export const MASCOT_LARGE = `            .           .          ...   .   .                    .          .                   .  
+                   ..             .          .      .             .                            .    
+    .                   .        .    . .     .     .       .   . .           .      .           .  
+   ..                .          .                                .          .             ...   .   
+             .                              .   . . .  .                 .:-  ..-.    ..         .  
+     .      .    .   .      .       .    .         .   .                 .#-  .#+.                  
+      .. .              .       .    .       .                   .       *%. .*@.   .=.        .    
+.          .                                                       .*...-@=..*@- ..=@-.     .       
+     .           .          .                                     .-% ..%%..#@+..:%@:.  .-:      .  
+    .  . ....    .      .                              ..         .+*..@@.:@@=..%@#...-%+.          
+         .=+..:..                         .             ..        .@:.%@-+@@::%@#:.+%@-......       
+.     .  .#@*.#@=.                                         .     .##:%%=%@*=%@#-*@@*..:+%%=..       
+  .     ##+@@+#@@::#:.                           .    .          =%=@@@@@@@@@@@@@+-%@@%-..          
+        *@=@@@%@@%*@@=.....               .             .      .:@@@@@@@@@@@@@@@@@@@@@@@-.          
+ . .    =@@*@@@@@@@@@@.=@#.   .  .                .           .=@@@@@@@@@@@@@@@@@@@@*=.             
+     .  .%@@@@@@@@@@@@*%@@-.....       . .       .       . ..-@@@@@@@@@@@@@@@@@@@@@.   .            
+    .   .-@@@@@@@@@@@@@@@@=:%@@-                        ..:%@@@@@@@@@@@@@@@@@@@@@=..                
+     .   .*@@@@@@@@@@@@@@@@@@@@=++:.            .      .*@@@@@@@@@@@@@@@@@@@@@@@@=.                 
+         ..*@@@@@@@@@@@@@@@@@@@@@@@-...            ..:%@@@@@@@@@@@@@@@@@@@@@@@@@@+.                 
+   . . .    .*@@@@@@@@@@@@@@@@@@@@@@@@+. .        ..#@@@@@@@@@@@@@@@@@@@@@@@@@@@@*.                 
+             ..:-*@@@@@@@@@@@@@@@@@@@@@@#=.     ..-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=.   .             .
+            .     .-*@@@@@@@@@@@@@@@@@@@@@@*:...:#@@@@@@@@@@@@@@@@@@@@@@@@@@@@#.          .   .  .  
+..   .                .*@@@@@@@@@@@@@@@@@@@@@@#*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@+.                     
+  .    .          .      ..:+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%..          .           
+              .     .        ..-*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%*..    .                   
+ .       .   .. .                .-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%%@%-..                        .  
+             .               . .-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@- ..           .                 
+                     .  .     .+@@%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#-.      .       .                 
+     ..                 .    .#@@%%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%=:..                            
+.                            .+..  ....:-+%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%*-... .                   
+      ..                                  .......:::::-=+**-...:=++#%=-=#@@@@@@@%:..              . 
+                               .    .      .               .      ...........-=**:.    .   .        
+                                       .  ..              .     .   .                     .         
+                                                                       .       . .                  
+ .                           .       .                                                           .. 
+.                                 .                      ..        .                  .             `;
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -557,7 +597,7 @@ Create `tests/boot.test.js`:
 ```js
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { BOOT_LINES } from '../js/boot.js';
+import { BOOT_LINES, SPLASH_TITLE, JITTER_DELAYS } from '../js/boot.js';
 
 test('BOOT_LINES is a non-empty array of {text, tag} entries', () => {
   assert.ok(Array.isArray(BOOT_LINES));
@@ -573,12 +613,25 @@ test('BOOT_LINES includes at least one OK and one WARN tag', () => {
   assert.ok(tags.includes('OK'));
   assert.ok(tags.includes('WARN'));
 });
+
+test('SPLASH_TITLE is the EMBERCROW OS title string', () => {
+  assert.equal(SPLASH_TITLE, 'EMBERCROW OS');
+});
+
+test('JITTER_DELAYS is a non-empty array of positive millisecond offsets', () => {
+  assert.ok(Array.isArray(JITTER_DELAYS));
+  assert.ok(JITTER_DELAYS.length > 0);
+  assert.ok(JITTER_DELAYS.every((d) => typeof d === 'number' && d > 0));
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/boot.test.js`
 Expected: FAIL — `Cannot find module '../js/boot.js'`
+
+> **Note:** this test file imports `SPLASH_TITLE` and `JITTER_DELAYS` in
+> addition to `BOOT_LINES`, all defined in Step 3 below.
 
 - [ ] **Step 3: Create `js/boot.js`**
 
@@ -595,8 +648,15 @@ export const BOOT_LINES = [
   { text: 'All systems nominal.', tag: '' },
 ];
 
+export const SPLASH_TITLE = 'EMBERCROW OS';
+
+// Irregular offsets (ms) for the splash glitch jitter bursts. Each entry is
+// added to the previous one to schedule a class toggle on the mascot/title.
+export const JITTER_DELAYS = [80, 160, 110, 220, 140];
+
 const LINE_DELAY_MS = 250;
-const MASCOT_DELAY_MS = 400;
+const SPLASH_SETTLE_MS = 900;
+const SPLASH_HOLD_MS = 700;
 const LOGIN_DELAY_MS = 500;
 const GRANTED_DELAY_MS = 700;
 const COLLAPSE_MS = 400;
@@ -608,9 +668,11 @@ export function playBoot(container, onComplete) {
   log.className = 'boot-log';
   const mascotEl = document.createElement('pre');
   mascotEl.className = 'boot-mascot';
+  const titleEl = document.createElement('div');
+  titleEl.className = 'boot-title';
   const prompt = document.createElement('div');
   prompt.className = 'boot-prompt';
-  container.append(log, mascotEl, prompt);
+  container.append(log, mascotEl, titleEl, prompt);
 
   let finished = false;
   const timeouts = [];
@@ -642,10 +704,33 @@ export function playBoot(container, onComplete) {
     delay += LINE_DELAY_MS;
   }
 
+  // Splash reveal: hide the boot log and glitch the mascot + title into view.
   timeouts.push(setTimeout(() => {
+    container.classList.add('boot-splash');
     mascotEl.textContent = MASCOT_LARGE;
+    titleEl.textContent = SPLASH_TITLE;
+    mascotEl.classList.add('glitch-in');
+    titleEl.classList.add('glitch-in');
+
+    let jitterDelay = 0;
+    for (const jitter of JITTER_DELAYS) {
+      jitterDelay += jitter;
+      timeouts.push(setTimeout(() => {
+        mascotEl.classList.toggle('jitter');
+        titleEl.classList.toggle('jitter');
+      }, jitterDelay));
+    }
   }, delay));
-  delay += MASCOT_DELAY_MS;
+  delay += SPLASH_SETTLE_MS;
+
+  // Settle: drop the glitch/jitter classes and hold the steady splash.
+  timeouts.push(setTimeout(() => {
+    mascotEl.classList.remove('jitter', 'glitch-in');
+    titleEl.classList.remove('jitter', 'glitch-in');
+    mascotEl.classList.add('settled');
+    titleEl.classList.add('settled');
+  }, delay));
+  delay += SPLASH_HOLD_MS;
 
   timeouts.push(setTimeout(() => {
     prompt.textContent = 'login: embercrow';
@@ -667,13 +752,89 @@ export function playBoot(container, onComplete) {
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `node --test tests/boot.test.js`
-Expected: PASS — `# pass 2`, `# fail 0`
+Expected: PASS — `# pass 4`, `# fail 0`
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Append splash/title/glitch styles to `style.css`**
+
+Add this block right after the existing `.boot-prompt { margin-top: 16px; }`
+rule and before the `/* Desktop */` section:
+
+```css
+/* Boot splash: mascot + title glitch reveal */
+.boot-title {
+  display: none;
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: 0.3em;
+  text-align: center;
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent), 0 0 18px var(--accent);
+  margin-top: 16px;
+}
+
+#boot-screen.boot-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#boot-screen.boot-splash .boot-log {
+  display: none;
+}
+
+#boot-screen.boot-splash .boot-mascot {
+  margin-top: 0;
+  font-size: 8px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+#boot-screen.boot-splash .boot-title {
+  display: block;
+}
+
+#boot-screen.boot-splash .boot-prompt {
+  margin-top: 24px;
+  font-size: 16px;
+}
+
+.boot-mascot.glitch-in,
+.boot-title.glitch-in {
+  animation: scanline-sweep 0.5s steps(6) infinite;
+}
+
+.boot-mascot.jitter,
+.boot-title.jitter {
+  transform: translate(2px, -1px);
+  opacity: 0.7;
+  clip-path: inset(0 0 8% 0);
+}
+
+.boot-mascot.settled,
+.boot-title.settled {
+  animation: text-flicker 3s infinite;
+}
+
+@keyframes scanline-sweep {
+  0% { opacity: 0.3; clip-path: inset(0 0 90% 0); }
+  50% { opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { opacity: 0.6; clip-path: inset(40% 0 0 0); }
+}
+
+@keyframes text-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.4; }
+  94% { opacity: 1; }
+}
+```
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add js/boot.js tests/boot.test.js
-git commit -m "feat: add boot/login sequence module"
+git add js/boot.js tests/boot.test.js style.css
+git commit -m "feat: add boot/login sequence with splash glitch reveal"
 ```
 
 ---
@@ -700,6 +861,7 @@ export function getApp(id) {
 import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
+import { MASCOT_LARGE } from './mascot.js';
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
@@ -856,6 +1018,7 @@ function updateClock() {
 }
 
 function init() {
+  document.getElementById('desktop-bg-mascot').textContent = MASCOT_LARGE;
   renderDesktopIcons();
   updateClock();
   setInterval(updateClock, 1000);
@@ -869,8 +1032,10 @@ playBoot(document.getElementById('boot-screen'), init);
 Run: `python -m http.server 8000` from `R:\stardance-webos`, open `http://localhost:8000/`.
 
 Expected:
-- Boot sequence plays: lines appear one by one with `[ OK ]` / `[WARN]` tags in ember orange, then the large ASCII mascot appears with its ember-colored eye, then `login: embercrow` followed by `-- access granted`.
-- Boot screen fades out, revealing an empty desktop (no icons yet) and a taskbar with "EMBERCROW OS" branding and a live clock updating every second.
+- Boot log lines appear one by one with `[ OK ]` / `[WARN]` tags in ember orange.
+- The boot log then disappears and a full-screen splash takes over: the large EMBERCROW ASCII mascot and the "EMBERCROW OS" title (angular Orbitron font, ember glow) glitch/flicker into view via brief position/opacity/clip jitter plus a scanline sweep, then settle into a steady ember flicker.
+- After the splash settles, `login: embercrow` appears below it, followed by `-- access granted`.
+- Boot screen fades out, revealing a desktop with the same mascot art rendered faintly (low-opacity watermark) centered behind the (still empty) desktop icon area, and a taskbar with "EMBERCROW OS" branding and a live clock updating every second.
 - Clicking or pressing a key during boot skips straight to the desktop.
 - No console errors.
 
@@ -1827,7 +1992,7 @@ git commit -m "feat: add Music Player app with arpeggio synth and visualizer"
 - [ ] **Step 1: Run the full test suite**
 
 Run: `node --test tests/`
-Expected: PASS — all suites green (`# pass 31`, `# fail 0` across `mascot`, `windowManager`, `boot`, `terminal`, `files`, `about`, `notes`, `music`).
+Expected: PASS — all suites green (`# pass 36`, `# fail 0` across `mascot`, `windowManager`, `boot`, `terminal`, `files`, `about`, `notes`, `music`).
 
 - [ ] **Step 2: Create `README.md`**
 
@@ -1872,7 +2037,8 @@ node --test tests/
 Run: `python -m http.server 8000`, open `http://localhost:8000/`.
 
 Walk through and confirm:
-- Boot sequence plays fully at least once (lines, mascot, login/access granted, collapse transition) and is skippable.
+- Boot sequence plays fully at least once: boot log lines, then the full-screen glitch splash (mascot + "EMBERCROW OS" title in Orbitron with ember glow), settling into a steady flicker, then login/access granted, then the collapse transition. The whole sequence is skippable via any key/click.
+- The desktop shows the EMBERCROW mascot as a faint, centered, low-opacity watermark behind the icons and windows.
 - All 5 desktop icons are visible and double-clicking each opens its window.
 - Each window can be dragged, focused (ember glow + taskbar highlight), minimized, restored from the taskbar, and closed.
 - Multiple windows opened together cascade rather than perfectly overlapping.
