@@ -3,6 +3,7 @@
   --fg: #e0e0e0;
   --accent: #ff5c2b;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-display: 'Orbitron', sans-serif;
   --taskbar-height: 40px;
 }
 
@@ -59,6 +60,22 @@ html, body {
   width: 100%;
   height: calc(100% - var(--taskbar-height));
   overflow: hidden;
+}
+
+#desktop-bg-mascot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  color: var(--fg);
+  opacity: 0.06;
+  font-size: 8px;
+  line-height: 1.1;
+  white-space: pre;
+  pointer-events: none;
+  z-index: 0;
+  user-select: none;
 }
 
 #desktop-icons {

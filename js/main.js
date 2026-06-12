@@ -1,6 +1,7 @@
 import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
+import { MASCOT_LARGE } from './mascot.js';
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
@@ -157,6 +158,7 @@ function updateClock() {
 }
 
 function init() {
+  document.getElementById('desktop-bg-mascot').textContent = MASCOT_LARGE;
   renderDesktopIcons();
   updateClock();
   setInterval(updateClock, 1000);
