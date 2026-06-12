@@ -1,4 +1,4 @@
-import { MASCOT_SMALL } from '../mascot.js';
+import { MASCOT_LARGE } from '../mascot.js';
 
 export function formatUptime(startMs, nowMs) {
   const totalSeconds = Math.max(0, Math.floor((nowMs - startMs) / 1000));
@@ -19,7 +19,7 @@ export const aboutApp = {
 
     const mascotEl = document.createElement('pre');
     mascotEl.className = 'about-mascot';
-    mascotEl.textContent = MASCOT_SMALL;
+    mascotEl.textContent = MASCOT_LARGE;
 
     const info = document.createElement('pre');
     info.className = 'about-info';

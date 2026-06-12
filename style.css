@@ -137,8 +137,8 @@ html, body {
   left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
-  color: rgba(224, 224, 224, 0.06);
-  font-size: 8px;
+  color: rgba(237, 237, 237, 0.09);
+  font-size: 11px;
   line-height: 1.1;
   white-space: pre;
   pointer-events: none;
@@ -357,6 +357,11 @@ html, body {
 .about-mascot {
   color: var(--accent);
   margin: 0;
+  font-size: 3px;
+  line-height: 1;
+  white-space: pre;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .about-info {
