@@ -13,8 +13,8 @@ export function splitMascotAtEye(mascotArt, marker = 'o') {
 export function calculateEyeOffset(cursorX, cursorY, viewportWidth, viewportHeight, maxOffset) {
   const centerX = viewportWidth / 2;
   const centerY = viewportHeight / 2;
-  const ratioX = (cursorX - centerX) / centerX;
-  const ratioY = (cursorY - centerY) / centerY;
+  const ratioX = centerX === 0 ? 0 : (cursorX - centerX) / centerX;
+  const ratioY = centerY === 0 ? 0 : (cursorY - centerY) / centerY;
   const clamp = (value) => Math.min(1, Math.max(-1, value));
   return {
     x: clamp(ratioX) * maxOffset,

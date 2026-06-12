@@ -38,6 +38,11 @@ test('calculateEyeOffset scales proportionally within the viewport', () => {
   assert.deepEqual(offset, { x: 4, y: 0 });
 });
 
+test('calculateEyeOffset returns zero offset (no NaN) when viewport dimensions are zero', () => {
+  const offset = calculateEyeOffset(100, 100, 0, 0, 8);
+  assert.deepEqual(offset, { x: 0, y: 0 });
+});
+
 test('getGlowIntensity increases with open window count and caps at max', () => {
   assert.equal(getGlowIntensity(0), 0.4);
   assert.equal(getGlowIntensity(5), 1.0);
