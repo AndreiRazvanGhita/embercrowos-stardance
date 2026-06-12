@@ -26,6 +26,8 @@ dependencies — it's plain HTML/CSS/JS.
 - **Idle presence** - leave the desktop alone for ~30 seconds and the
   mascot's eye narrows while a cryptic message appears beside it
 - **Persistent Notes app** - text saved to `localStorage` between sessions
+- **Theme switcher** - cycle the desktop between Ember, Phosphor, and Cyber
+  color themes with the `[*]` taskbar button
 
 ## Running locally
 
