@@ -65,7 +65,7 @@ export const terminalApp = {
         lineEl.textContent = line;
         output.appendChild(lineEl);
       }
-      container.scrollTop = container.scrollHeight;
+      output.scrollTop = output.scrollHeight;
     };
 
     printLines(['EMBERCROW OS Terminal v1.0', 'Type "help" for a list of commands.', '']);
@@ -84,7 +84,6 @@ export const terminalApp = {
         printLines(result.lines);
       }
       input.value = '';
-      container.scrollTop = container.scrollHeight;
     });
 
     input.focus();
