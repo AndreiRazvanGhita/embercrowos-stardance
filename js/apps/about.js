@@ -36,7 +36,13 @@ export const aboutApp = {
     };
 
     render();
-    setInterval(render, 1000);
+    const intervalId = setInterval(() => {
+      if (!container.isConnected) {
+        clearInterval(intervalId);
+        return;
+      }
+      render();
+    }, 1000);
 
     container.append(mascotEl, info);
   },
