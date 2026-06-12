@@ -1,6 +1,8 @@
 import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
+import { MASCOT_LARGE } from './mascot.js';
+import { splitMascotAtEye, getGlowIntensity } from './presence.js';
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
@@ -156,8 +158,31 @@ function updateClock() {
   taskbarClock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
 }
 
+let presenceEyeEl = null;
+
+function renderDesktopMascot() {
+  const mascotEl = document.getElementById('desktop-mascot');
+  const { before, eye, after } = splitMascotAtEye(MASCOT_LARGE);
+  mascotEl.textContent = '';
+  mascotEl.append(document.createTextNode(before));
+  const eyeEl = document.createElement('span');
+  eyeEl.className = 'embercrow-eye';
+  eyeEl.textContent = eye;
+  mascotEl.append(eyeEl);
+  mascotEl.append(document.createTextNode(after));
+  return eyeEl;
+}
+
+function updatePresenceGlow() {
+  if (!presenceEyeEl) return;
+  const intensity = getGlowIntensity(wm.windows.length);
+  presenceEyeEl.style.setProperty('--presence-intensity', String(intensity));
+}
+
 function init() {
   renderDesktopIcons();
+  presenceEyeEl = renderDesktopMascot();
+  updatePresenceGlow();
   updateClock();
   setInterval(updateClock, 1000);
 }
