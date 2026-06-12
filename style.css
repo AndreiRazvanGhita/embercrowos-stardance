@@ -54,6 +54,75 @@ html, body {
   margin-top: 16px;
 }
 
+/* Boot splash: mascot + title glitch reveal */
+.boot-title {
+  display: none;
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: 0.3em;
+  text-align: center;
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent), 0 0 18px var(--accent);
+  margin-top: 16px;
+}
+
+#boot-screen.boot-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#boot-screen.boot-splash .boot-log {
+  display: none;
+}
+
+#boot-screen.boot-splash .boot-mascot {
+  margin-top: 0;
+  font-size: 8px;
+  line-height: 1.1;
+  text-align: center;
+}
+
+#boot-screen.boot-splash .boot-title {
+  display: block;
+}
+
+#boot-screen.boot-splash .boot-prompt {
+  margin-top: 24px;
+  font-size: 16px;
+}
+
+.boot-mascot.glitch-in,
+.boot-title.glitch-in {
+  animation: scanline-sweep 0.5s steps(6) infinite;
+}
+
+.boot-mascot.jitter,
+.boot-title.jitter {
+  transform: translate(2px, -1px);
+  opacity: 0.7;
+  clip-path: inset(0 0 8% 0);
+}
+
+.boot-mascot.settled,
+.boot-title.settled {
+  animation: text-flicker 3s infinite;
+}
+
+@keyframes scanline-sweep {
+  0% { opacity: 0.3; clip-path: inset(0 0 90% 0); }
+  50% { opacity: 1; clip-path: inset(0 0 0 0); }
+  100% { opacity: 0.6; clip-path: inset(40% 0 0 0); }
+}
+
+@keyframes text-flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.4; }
+  94% { opacity: 1; }
+}
+
 /* Desktop */
 #desktop {
   position: relative;
