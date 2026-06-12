@@ -1,0 +1,165 @@
+import { WindowManager } from './windowManager.js';
+import { apps, getApp } from './apps.js';
+import { playBoot } from './boot.js';
+
+const wm = new WindowManager();
+const windowsContainer = document.getElementById('windows-container');
+const desktopIcons = document.getElementById('desktop-icons');
+const taskbarApps = document.getElementById('taskbar-apps');
+const taskbarClock = document.getElementById('taskbar-clock');
+
+const windowEls = new Map();
+const taskbarEls = new Map();
+
+function updateFocusStyles() {
+  const top = wm.getTopWindow();
+  for (const win of wm.windows) {
+    const el = windowEls.get(win.id);
+    if (!el) continue;
+    el.style.zIndex = String(win.zIndex);
+    el.classList.toggle('focused', !!top && top.id === win.id);
+    const entry = taskbarEls.get(win.id);
+    if (entry) entry.classList.toggle('focused', !!top && top.id === win.id);
+  }
+}
+
+function closeWindow(id) {
+  wm.close(id);
+  windowEls.get(id)?.remove();
+  windowEls.delete(id);
+  taskbarEls.get(id)?.remove();
+  taskbarEls.delete(id);
+  updateFocusStyles();
+}
+
+function focusWindow(id) {
+  wm.focus(id);
+  const el = windowEls.get(id);
+  if (el) el.style.display = '';
+  updateFocusStyles();
+}
+
+function minimizeWindow(id) {
+  wm.minimize(id);
+  const el = windowEls.get(id);
+  if (el) el.style.display = 'none';
+  updateFocusStyles();
+}
+
+function startDrag(id, startEvent) {
+  const win = wm.windows.find((w) => w.id === id);
+  const el = windowEls.get(id);
+  const startX = startEvent.clientX;
+  const startY = startEvent.clientY;
+  const originX = win.x;
+  const originY = win.y;
+
+  const onMove = (e) => {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    wm.move(id, originX + dx, originY + dy, window.innerWidth, window.innerHeight);
+    el.style.left = `${win.x}px`;
+    el.style.top = `${win.y}px`;
+  };
+  const onUp = () => {
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+  };
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+}
+
+function openApp(appId) {
+  const app = getApp(appId);
+  if (!app) return;
+  const win = wm.open(appId, app.defaultSize);
+
+  const el = document.createElement('div');
+  el.className = 'window';
+  el.style.left = `${win.x}px`;
+  el.style.top = `${win.y}px`;
+  el.style.width = `${win.width}px`;
+  el.style.height = `${win.height}px`;
+
+  const titlebar = document.createElement('div');
+  titlebar.className = 'window-titlebar';
+
+  const titleText = document.createElement('span');
+  titleText.textContent = `${app.icon} ${app.title}`;
+
+  const controls = document.createElement('span');
+  controls.className = 'window-controls';
+  const minBtn = document.createElement('span');
+  minBtn.textContent = '[_]';
+  const closeBtn = document.createElement('span');
+  closeBtn.textContent = '[x]';
+  controls.append(minBtn, closeBtn);
+
+  titlebar.append(titleText, controls);
+
+  const body = document.createElement('div');
+  body.className = 'window-body';
+
+  el.append(titlebar, body);
+  windowsContainer.appendChild(el);
+  windowEls.set(win.id, el);
+
+  app.createContent(body);
+
+  titlebar.addEventListener('mousedown', (e) => {
+    if (e.target === minBtn || e.target === closeBtn) return;
+    focusWindow(win.id);
+    startDrag(win.id, e);
+  });
+  el.addEventListener('mousedown', () => focusWindow(win.id));
+  minBtn.addEventListener('click', () => minimizeWindow(win.id));
+  closeBtn.addEventListener('click', () => closeWindow(win.id));
+
+  const taskbarEntry = document.createElement('div');
+  taskbarEntry.className = 'taskbar-entry';
+  taskbarEntry.textContent = `${app.icon} ${app.title}`;
+  taskbarEntry.addEventListener('click', () => {
+    const top = wm.getTopWindow();
+    if (win.minimized || !top || top.id !== win.id) {
+      focusWindow(win.id);
+    } else {
+      minimizeWindow(win.id);
+    }
+  });
+  taskbarApps.appendChild(taskbarEntry);
+  taskbarEls.set(win.id, taskbarEntry);
+
+  focusWindow(win.id);
+}
+
+function renderDesktopIcons() {
+  for (const app of apps) {
+    const icon = document.createElement('div');
+    icon.className = 'desktop-icon';
+
+    const glyph = document.createElement('div');
+    glyph.className = 'icon-glyph';
+    glyph.textContent = app.icon;
+
+    const label = document.createElement('div');
+    label.textContent = app.title;
+
+    icon.append(glyph, label);
+    icon.addEventListener('dblclick', () => openApp(app.id));
+    desktopIcons.appendChild(icon);
+  }
+}
+
+function updateClock() {
+  const now = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  taskbarClock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+}
+
+function init() {
+  renderDesktopIcons();
+  updateClock();
+  setInterval(updateClock, 1000);
+}
+
+playBoot(document.getElementById('boot-screen'), init);
