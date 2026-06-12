@@ -362,3 +362,23 @@ html, body {
 .embercrow-eye.blinking {
   animation: embercrow-blink 0.15s ease-in-out;
 }
+
+.embercrow-eye.idle {
+  transform: scaleY(0.3) !important;
+  opacity: 0.5;
+  transition: transform 1.2s ease, opacity 1.2s ease;
+}
+
+.embercrow-ambient-message {
+  position: absolute;
+  white-space: nowrap;
+  color: var(--fg);
+  opacity: 0;
+  font-size: 12px;
+  transition: opacity 1.2s ease;
+  pointer-events: none;
+}
+
+.embercrow-ambient-message.visible {
+  opacity: 0.4;
+}
