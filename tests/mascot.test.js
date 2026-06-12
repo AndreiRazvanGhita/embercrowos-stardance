@@ -14,3 +14,7 @@ test('MASCOT_LARGE has more lines than MASCOT_SMALL', () => {
 test('MASCOT_LARGE contains the ember eye marker', () => {
   assert.ok(MASCOT_LARGE.includes('o'));
 });
+
+test('MASCOT_LARGE uses dense fill characters for the silhouette', () => {
+  assert.ok(MASCOT_LARGE.includes('@@@@@@@@@@@@@@@@@@@@'));
+});

@@ -10,8 +10,15 @@ export const BOOT_LINES = [
   { text: 'All systems nominal.', tag: '' },
 ];
 
+export const SPLASH_TITLE = 'EMBERCROW OS';
+
+// Irregular offsets (ms) for the splash glitch jitter bursts. Each entry is
+// added to the previous one to schedule a class toggle on the mascot/title.
+export const JITTER_DELAYS = [80, 160, 110, 220, 140];
+
 const LINE_DELAY_MS = 250;
-const MASCOT_DELAY_MS = 400;
+const SPLASH_SETTLE_MS = 900;
+const SPLASH_HOLD_MS = 700;
 const LOGIN_DELAY_MS = 500;
 const GRANTED_DELAY_MS = 700;
 const COLLAPSE_MS = 400;
@@ -23,9 +30,11 @@ export function playBoot(container, onComplete) {
   log.className = 'boot-log';
   const mascotEl = document.createElement('pre');
   mascotEl.className = 'boot-mascot';
+  const titleEl = document.createElement('div');
+  titleEl.className = 'boot-title';
   const prompt = document.createElement('div');
   prompt.className = 'boot-prompt';
-  container.append(log, mascotEl, prompt);
+  container.append(log, mascotEl, titleEl, prompt);
 
   let finished = false;
   const timeouts = [];
@@ -59,10 +68,33 @@ export function playBoot(container, onComplete) {
     delay += LINE_DELAY_MS;
   }
 
+  // Splash reveal: hide the boot log and glitch the mascot + title into view.
   timeouts.push(setTimeout(() => {
+    container.classList.add('boot-splash');
     mascotEl.textContent = MASCOT_LARGE;
+    titleEl.textContent = SPLASH_TITLE;
+    mascotEl.classList.add('glitch-in');
+    titleEl.classList.add('glitch-in');
+
+    let jitterDelay = 0;
+    for (const jitter of JITTER_DELAYS) {
+      jitterDelay += jitter;
+      timeouts.push(setTimeout(() => {
+        mascotEl.classList.toggle('jitter');
+        titleEl.classList.toggle('jitter');
+      }, jitterDelay));
+    }
   }, delay));
-  delay += MASCOT_DELAY_MS;
+  delay += SPLASH_SETTLE_MS;
+
+  // Settle: drop the glitch/jitter classes and hold the steady splash.
+  timeouts.push(setTimeout(() => {
+    mascotEl.classList.remove('jitter', 'glitch-in');
+    titleEl.classList.remove('jitter', 'glitch-in');
+    mascotEl.classList.add('settled');
+    titleEl.classList.add('settled');
+  }, delay));
+  delay += SPLASH_HOLD_MS;
 
   timeouts.push(setTimeout(() => {
     prompt.textContent = 'login: embercrow';
