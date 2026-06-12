@@ -44,6 +44,7 @@ function closeWindow(id) {
   taskbarEls.get(id)?.remove();
   taskbarEls.delete(id);
   updateFocusStyles();
+  updatePresenceGlow();
 }
 
 function focusWindow(id) {
@@ -144,6 +145,7 @@ function openApp(appId) {
   taskbarEls.set(win.id, taskbarEntry);
 
   focusWindow(win.id);
+  updatePresenceGlow();
 }
 
 function renderDesktopIcons() {
