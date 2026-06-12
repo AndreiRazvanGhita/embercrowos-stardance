@@ -203,3 +203,31 @@ html, body {
     transparent 3px
   );
 }
+
+/* Terminal */
+.app-terminal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+.terminal-input-line {
+  display: flex;
+}
+
+.terminal-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  outline: none;
+  caret-color: var(--accent);
+}
