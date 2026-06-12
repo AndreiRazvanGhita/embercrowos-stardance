@@ -231,3 +231,33 @@ html, body {
   outline: none;
   caret-color: var(--accent);
 }
+
+/* File Explorer */
+.app-files {
+  display: flex;
+  height: 100%;
+  gap: 8px;
+}
+
+.files-tree {
+  width: 40%;
+  overflow-y: auto;
+}
+
+.files-item {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.files-item:hover {
+  color: var(--accent);
+}
+
+.files-view {
+  flex: 1;
+  border-left: 1px solid var(--fg);
+  padding-left: 8px;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-y: auto;
+}
