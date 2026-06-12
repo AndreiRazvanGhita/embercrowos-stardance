@@ -49,6 +49,10 @@ app be built and demoed independently (useful for devlog checkpoints).
 **Typography**
 - Monospace throughout (e.g. "JetBrains Mono" / "Fira Code" via Google
   Fonts, with system monospace fallback)
+- A secondary display font ("Orbitron" via Google Fonts) is used only for
+  the "EMBERCROW OS" boot splash title — angular, geometric, sci-fi feel,
+  rendered large with ember-colored glow/flicker. All other text (windows,
+  taskbar, terminal, boot log) stays monospace.
 
 **Window chrome**
 - Sharp 1px borders, no rounded corners, no traditional drop shadows
@@ -63,8 +67,11 @@ app be built and demoed independently (useful for devlog checkpoints).
 - Text glow/flicker animation on boot sequence text and focused window titles
 
 **Desktop background**
-- Plain black, optionally a faint grid or ASCII-noise-style texture
-  (subtle, not distracting)
+- Plain black, with the full EMBERCROW mascot silhouette (`MASCOT_LARGE`)
+  rendered centered behind the desktop icons/windows at low opacity
+  (~5-8%, off-white `--fg` color), static, non-interactive
+  (`pointer-events: none`) — a subtle watermark rather than a distracting
+  graphic
 
 ## Identity — EMBERCROW OS
 
@@ -92,16 +99,24 @@ as a small icon in the taskbar / About app.
 
 ## Boot/Login Sequence (new feature beyond the guide)
 
-A full-screen black overlay plays before the desktop is shown:
+A full-screen black overlay (`#boot-screen`) plays before the desktop is
+shown:
 
 1. **Scrolling boot log** — fake system messages typed line-by-line with a
    short delay (e.g. `Initializing kernel modules...`,
    `Mounting //embercrow/root...`, `Establishing secure shell...`), with
    ember-colored `[ OK ]` / `[WARN]` tags
-2. **Mascot reveal** — the EMBERCROW ASCII silhouette types/fades in, eye
-   glowing ember-orange with a subtle flicker
-3. **Login prompt** — a cosmetic `login:` / `access granted` exchange that
-   types itself out automatically — no real authentication, no password
+2. **Splash reveal** — the boot log fades out and the overlay enters a
+   "splash" mode: the full EMBERCROW ASCII mascot (`MASCOT_LARGE`) and an
+   "EMBERCROW OS" title (Orbitron display font, ember glow) animate into a
+   centered, full-screen layout via a glitch/scanline effect — CSS
+   keyframes drive jitter on position/opacity/clip-path plus a scanline
+   sweep, with a few randomized extra jitter-class toggles from JS for
+   irregularity. The mascot's ember eye flickers. Holds briefly once
+   settled.
+3. **Login prompt** — a cosmetic `login:` / `access granted` exchange
+   fades in over/below the splash, types itself out automatically — no
+   real authentication, no password
 4. **Transition** — overlay fades out / collapses with a CRT-style
    scanline effect, revealing the desktop
 
