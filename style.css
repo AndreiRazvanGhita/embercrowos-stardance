@@ -7,6 +7,14 @@
   --taskbar-height: 40px;
 }
 
+body[data-theme="phosphor"] {
+  --accent: #33ff66;
+}
+
+body[data-theme="cyber"] {
+  --accent: #33ccff;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -255,6 +263,21 @@ html, body {
 #taskbar-brand {
   color: var(--accent);
   font-weight: bold;
+}
+
+#theme-toggle {
+  background: transparent;
+  border: 1px solid var(--fg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+#theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 #taskbar-apps {
