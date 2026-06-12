@@ -2,7 +2,9 @@ import { WindowManager } from './windowManager.js';
 import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
 import { MASCOT_LARGE } from './mascot.js';
-import { splitMascotAtEye, getGlowIntensity } from './presence.js';
+import { splitMascotAtEye, getGlowIntensity, calculateEyeOffset } from './presence.js';
+
+const PRESENCE_MAX_OFFSET = 8;
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
@@ -179,10 +181,18 @@ function updatePresenceGlow() {
   presenceEyeEl.style.setProperty('--presence-intensity', String(intensity));
 }
 
+function initEyeTracking(eyeEl) {
+  document.addEventListener('mousemove', (e) => {
+    const offset = calculateEyeOffset(e.clientX, e.clientY, window.innerWidth, window.innerHeight, PRESENCE_MAX_OFFSET);
+    eyeEl.style.transform = `translate(${offset.x}px, ${offset.y}px)`;
+  });
+}
+
 function init() {
   renderDesktopIcons();
   presenceEyeEl = renderDesktopMascot();
   updatePresenceGlow();
+  initEyeTracking(presenceEyeEl);
   updateClock();
   setInterval(updateClock, 1000);
 }
