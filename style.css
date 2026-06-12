@@ -299,3 +299,36 @@ html, body {
   color: var(--fg);
   opacity: 0.4;
 }
+
+/* Music */
+.app-music {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+}
+
+.music-track {
+  color: var(--accent);
+}
+
+.music-visualizer {
+  background: var(--bg);
+  border: 1px solid var(--fg);
+}
+
+.music-toggle {
+  background: transparent;
+  border: 1px solid var(--fg);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  padding: 4px 16px;
+  cursor: pointer;
+}
+
+.music-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
