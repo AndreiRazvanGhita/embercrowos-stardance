@@ -261,3 +261,19 @@ html, body {
   white-space: pre-wrap;
   overflow-y: auto;
 }
+
+/* About */
+.app-about {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+}
+
+.about-mascot {
+  color: var(--accent);
+  margin: 0;
+}
+
+.about-info {
+  margin: 0;
+}
