@@ -3,6 +3,7 @@ import { apps, getApp } from './apps.js';
 import { playBoot } from './boot.js';
 import { MASCOT_LARGE } from './mascot.js';
 import { splitMascotAtEye, getGlowIntensity, calculateEyeOffset, getNextBlinkDelay, isIdle, pickIdleMessage } from './presence.js';
+import { THEMES, getNextTheme } from './themes.js';
 
 const PRESENCE_MAX_OFFSET = 8;
 const PRESENCE_IDLE_THRESHOLD_MS = 30000;
@@ -15,12 +16,14 @@ const PRESENCE_IDLE_MESSAGES = [
 let presenceLastActivityMs = Date.now();
 let presenceIdle = false;
 let ambientEl = null;
+let currentThemeName = THEMES[0].name;
 
 const wm = new WindowManager();
 const windowsContainer = document.getElementById('windows-container');
 const desktopIcons = document.getElementById('desktop-icons');
 const taskbarApps = document.getElementById('taskbar-apps');
 const taskbarClock = document.getElementById('taskbar-clock');
+const themeToggle = document.getElementById('theme-toggle');
 
 const windowEls = new Map();
 const taskbarEls = new Map();
@@ -166,6 +169,12 @@ function renderDesktopIcons() {
   }
 }
 
+function cycleTheme() {
+  const next = getNextTheme(currentThemeName);
+  currentThemeName = next.name;
+  document.body.dataset.theme = next.name;
+}
+
 function updateClock() {
   const now = new Date();
   const pad = (n) => String(n).padStart(2, '0');
@@ -254,6 +263,7 @@ function init() {
   startIdleWatch(presenceEyeEl);
   updateClock();
   setInterval(updateClock, 1000);
+  themeToggle.addEventListener('click', cycleTheme);
 }
 
 playBoot(document.getElementById('boot-screen'), init);
